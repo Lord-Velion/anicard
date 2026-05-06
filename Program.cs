@@ -1,5 +1,6 @@
 using AniCard.Data;
 using AniCard.Models.Entities;
+using AniCard.Models.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -78,5 +80,5 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
-//app.MapControllers();
+app.MapControllers();
 app.Run();
