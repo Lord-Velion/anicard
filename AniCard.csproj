@@ -24,13 +24,12 @@
 	  <!-- Added authentication & identity packages (upgraded to .NET 9 versions) -->
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
 	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />
+	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 
-	  <!-- Upgraded Swashbuckle to the latest stable version (matching the working project) -->
-	  <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.5" />
 	</ItemGroup>
 
   <ItemGroup>
