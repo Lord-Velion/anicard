@@ -4,9 +4,16 @@ namespace AniCard.Models.Services
 {
     public class CharacterService : ICharacterService
     {
-        public Task UploadCharacterAsync(CharacterUploadDto dto)
+        private readonly IKKLoaderService _kkLoaderService;
+
+        public CharacterService(IKKLoaderService kkLoaderService)
         {
-            return Task.CompletedTask;
+            _kkLoaderService = kkLoaderService;
+        }
+
+        public async Task UploadCharacterAsync(CharacterUploadDto dto)
+        {
+            await _kkLoaderService.GetCharacterMetadataAsync(dto.File);
         }
     }
 }

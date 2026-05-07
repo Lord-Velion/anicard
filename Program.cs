@@ -51,6 +51,10 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddHttpClient<IKKLoaderService, KKLoaderService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["KKLoaderService:BaseUrl"]);
+});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

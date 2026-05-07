@@ -1,4 +1,5 @@
 ﻿using AniCard.Models.DTOs;
+using AniCard.Models.Exceptions;
 using AniCard.Models.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,7 +33,14 @@ namespace AniCard.Controllers
             if (fileExtension != ".png")
                 return BadRequest("Only PNG files are allowed.");
 
-            await _characterService.UploadCharacterAsync(dto);
+            try
+            {
+                await _characterService.UploadCharacterAsync(dto);
+            }
+            catch (InvalidCharacterException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             return Ok(new
             {
