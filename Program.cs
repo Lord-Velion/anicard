@@ -1,6 +1,7 @@
 using AniCard.Data;
 using AniCard.Models.Entities;
 using AniCard.Models.Services;
+using AniCard.Models.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -51,6 +52,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddScoped<ICharacterFileRepository, CharacterFileRepository>();
 builder.Services.AddHttpClient<IKKLoaderService, KKLoaderService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["KKLoaderService:BaseUrl"]);

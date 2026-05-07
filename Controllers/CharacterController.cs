@@ -36,19 +36,19 @@ namespace AniCard.Controllers
             try
             {
                 await _characterService.UploadCharacterAsync(dto);
+
+                return Ok(new
+                {
+                    message = "Upload successful",
+                    description = dto.Description,
+                    tags = dto.Tags,
+                    fileName = dto.File.FileName
+                });
             }
             catch (InvalidCharacterException ex)
             {
                 return BadRequest(ex.Message);
             }
-
-            return Ok(new
-            {
-                message = "Upload successful",
-                description = dto.Description,
-                tags = dto.Tags,
-                fileName = dto.File.FileName
-            });
         }
     }
 }
