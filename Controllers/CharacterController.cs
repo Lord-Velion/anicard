@@ -1,4 +1,5 @@
 ﻿using AniCard.Models.DTOs;
+using AniCard.Models.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,13 @@ namespace AniCard.Controllers
     [ApiController]
     public class CharacterController : ControllerBase
     {
+        private readonly ICharacterService _characterService;
+
+        public CharacterController(ICharacterService characterService)
+        {
+            _characterService = characterService;
+        }
+
         [HttpPost("upload")]
         [Authorize]
         [Consumes("multipart/form-data")]
@@ -24,6 +32,7 @@ namespace AniCard.Controllers
             if (fileExtension != ".png")
                 return BadRequest("Only PNG files are allowed.");
 
+            await _characterService.UploadCharacterAsync(dto);
 
             return Ok(new
             {

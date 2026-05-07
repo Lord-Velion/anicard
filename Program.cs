@@ -50,6 +50,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
