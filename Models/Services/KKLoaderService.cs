@@ -30,10 +30,10 @@ namespace AniCard.Models.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            var metadata = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(json)
-                           ?? throw new InvalidCharacterException("Invalid response from metadata service.");
+            var result = System.Text.Json.JsonSerializer.Deserialize<CharacterMetadataResult>(json)
+                         ?? throw new InvalidCharacterException("Invalid response from metadata service.");
 
-            return new CharacterMetadataResult { Metadata = metadata };
+            return result;
         }
     }
 }
