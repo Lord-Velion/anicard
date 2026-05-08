@@ -1,7 +1,7 @@
 using AniCard.Models.DTOs;
-using AniCard.Models.Repositories;
+using AniCard.Repositories;
 
-namespace AniCard.Models.Services
+namespace AniCard.Services
 {
     public class CharacterService : ICharacterService
     {

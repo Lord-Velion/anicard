@@ -1,6 +1,6 @@
-﻿using AniCard.Models.DTOs;
-using AniCard.Models.Exceptions;
-using AniCard.Models.Services;
+﻿using AniCard.Exceptions;
+using AniCard.Models.DTOs;
+using AniCard.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

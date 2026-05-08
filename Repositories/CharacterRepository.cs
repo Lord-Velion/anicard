@@ -3,7 +3,7 @@ using AniCard.Models.DTOs;
 using AniCard.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace AniCard.Models.Repositories
+namespace AniCard.Repositories
 {
     public class CharacterRepository : ICharacterRepository
     {

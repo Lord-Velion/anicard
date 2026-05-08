@@ -1,7 +1,7 @@
 using AniCard.Models.DTOs;
 using AniCard.Models.Entities;
 
-namespace AniCard.Models.Repositories
+namespace AniCard.Repositories
 {
     public interface ICharacterRepository
     {

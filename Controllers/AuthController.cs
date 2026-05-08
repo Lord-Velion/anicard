@@ -1,5 +1,5 @@
 using AniCard.Models.DTOs;
-using AniCard.Models.Services;
+using AniCard.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

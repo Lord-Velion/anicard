@@ -1,6 +1,6 @@
 using AniCard.Models.DTOs;
 
-namespace AniCard.Models.Services
+namespace AniCard.Services
 {
     public interface IAuthService
     {

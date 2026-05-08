@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace AniCard.Models.Services
+namespace AniCard.Services
 {
     public class AuthService : IAuthService
     {

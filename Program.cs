@@ -1,7 +1,5 @@
 using AniCard.Data;
 using AniCard.Models.Entities;
-using AniCard.Models.Services;
-using AniCard.Models.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using AniCard.Repositories;
+using AniCard.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

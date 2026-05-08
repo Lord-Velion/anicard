@@ -2,7 +2,7 @@ using AniCard.Models.DTOs;
 using AniCard.Models.Exceptions;
 using System.Net.Http;
 
-namespace AniCard.Models.Services
+namespace AniCard.Services
 {
     public class KKLoaderService : IKKLoaderService
     {

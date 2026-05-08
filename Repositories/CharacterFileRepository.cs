@@ -1,4 +1,4 @@
-namespace AniCard.Models.Repositories
+namespace AniCard.Repositories
 {
     public class CharacterFileRepository : ICharacterFileRepository
     {
