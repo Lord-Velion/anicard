@@ -4,6 +4,7 @@ using AniCard.Models.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AniCard.Controllers
 {
@@ -35,7 +36,9 @@ namespace AniCard.Controllers
 
             try
             {
-                await _characterService.UploadCharacterAsync(dto);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                            ?? throw new InvalidOperationException("User ID not found in token.");
+                await _characterService.UploadCharacterAsync(dto, userId);
 
                 return Ok(new
                 {

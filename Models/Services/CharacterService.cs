@@ -7,17 +7,20 @@ namespace AniCard.Models.Services
     {
         private readonly IKKLoaderService _kkLoaderService;
         private readonly ICharacterFileRepository _fileRepository;
+        private readonly ICharacterRepository _characterRepository;
 
-        public CharacterService(IKKLoaderService kkLoaderService, ICharacterFileRepository fileRepository)
+        public CharacterService(IKKLoaderService kkLoaderService, ICharacterFileRepository fileRepository, ICharacterRepository characterRepository)
         {
             _kkLoaderService = kkLoaderService;
             _fileRepository = fileRepository;
+            _characterRepository = characterRepository;
         }
 
-        public async Task UploadCharacterAsync(CharacterUploadDto dto)
+        public async Task UploadCharacterAsync(CharacterUploadDto dto, string userId)
         {
-            await _kkLoaderService.GetCharacterMetadataAsync(dto.File);
-            await _fileRepository.UploadCharacterAsync(dto.File);
+            var metadata = await _kkLoaderService.GetCharacterMetadataAsync(dto.File);
+            var objectKey = await _fileRepository.UploadCharacterAsync(dto.File);
+            await _characterRepository.UploadCharacterAsync(metadata, objectKey, dto.Description, userId);
         }
     }
 }

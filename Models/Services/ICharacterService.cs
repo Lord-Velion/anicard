@@ -4,6 +4,6 @@ namespace AniCard.Models.Services
 {
     public interface ICharacterService
     {
-        Task UploadCharacterAsync(CharacterUploadDto dto);
+        Task UploadCharacterAsync(CharacterUploadDto dto, string userId);
     }
 }
