@@ -5,6 +5,6 @@ namespace AniCard.Models.Repositories
 {
     public interface ICharacterRepository
     {
-        Task<Character> UploadCharacterAsync(CharacterMetadataResult metadata, string objectKey, string description, string userId);
+        Task<Character> UploadCharacterAsync(CharacterMetadataResult metadata, string objectKey, string description, string[] tags, string userId);
     }
 }

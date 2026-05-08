@@ -20,7 +20,7 @@ namespace AniCard.Models.Services
         {
             var metadata = await _kkLoaderService.GetCharacterMetadataAsync(dto.File);
             var objectKey = await _fileRepository.UploadCharacterAsync(dto.File);
-            await _characterRepository.UploadCharacterAsync(metadata, objectKey, dto.Description, userId);
+            await _characterRepository.UploadCharacterAsync(metadata, objectKey, dto.Description, dto.Tags, userId);
         }
     }
 }
