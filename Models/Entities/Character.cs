@@ -14,5 +14,6 @@ namespace AniCard.Models.Entities
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
         public required string UserId { get; set; }
         public User? User { get; set; }
+        public ICollection<Tag> Tags { get; set; } = new List<Tag>();
     }
 }

@@ -1,6 +1,6 @@
-namespace AniCard.Models.Repositories
+namespace AniCard.Repositories
 {
-    public class CharacterFileRepository : ICharacterFileRepository
+    public class CharacterFileRepository
     {
         public Task<string> UploadCharacterAsync(IFormFile file)
         {

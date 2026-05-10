@@ -1,7 +1,5 @@
 using AniCard.Data;
 using AniCard.Models.Entities;
-using AniCard.Models.Services;
-using AniCard.Models.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,18 +8,28 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using AniCard.Repositories;
+using AniCard.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
 });
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=file::memory:?cache=shared"));
+{
+    if (!string.IsNullOrEmpty(connectionString))
+    {
+        options.UseNpgsql(connectionString);
+    }
+    else
+    {
+        options.UseSqlite("Data Source=file::memory:?cache=shared");
+    }
+});
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -50,10 +58,12 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICharacterService, CharacterService>();
-builder.Services.AddScoped<ICharacterFileRepository, CharacterFileRepository>();
-builder.Services.AddHttpClient<IKKLoaderService, KKLoaderService>(client =>
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<CharacterService>();
+builder.Services.AddScoped<PngValidatorService>();
+builder.Services.AddScoped<CharacterFileRepository>();
+builder.Services.AddScoped<CharacterRepository>();
+builder.Services.AddHttpClient<KKLoaderService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["KKLoaderService:BaseUrl"]);
 });

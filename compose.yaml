@@ -1,0 +1,117 @@
+services:
+  # PostgreSQL Database (using secrets for password)
+  db:
+    image: postgres:16-alpine          # pinned version for reproducibility
+    container_name: anicard-postgres
+    restart: unless-stopped
+    user: postgres
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql/data   # standard PostgreSQL data dir
+    environment:
+      - POSTGRES_DB=anicard
+      - POSTGRES_USER=anicard
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    ports:
+      - "5432:5432"                        # optional: remove in production
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "anicard"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # MinIO Object Storage (bind mount for easy backup, healthcheck added)
+  minio:
+    image: minio/minio:RELEASE.2024-01-16T16-07-38Z   # pinned version
+    container_name: anicard-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Web Console
+    environment:
+      MINIO_ROOT_USER: minioadmin        # CHANGE ME – use .env or secrets
+      MINIO_ROOT_PASSWORD: minioadmin    # CHANGE ME
+    volumes:
+      - ./minio/data:/mnt/data           # bind mount (easy access on host)
+    command: server /mnt/data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - app-network
+
+  # KKLoader Python Microservice (healthcheck, restart)
+  kkloader:
+    # Replace with your actual image (build or pull)
+    image: <DOCKER_REGISTRY>/kkloader:1.0.0    # tag specific version
+    container_name: anicard-kkloader
+    restart: unless-stopped
+    ports:
+      - "8000:8000"      # expose if needed; remove for internal only
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - app-network
+
+  # AniCard .NET Application
+  server:
+    build:
+      context: .
+      target: final               # assumes multi-stage Dockerfile with 'final' stage
+    container_name: anicard-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      # Connection strings using service names
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=anicard;Username=anicard;PasswordFile=/run/secrets/db-password
+      # MinIO configuration
+      - Minio__Endpoint=minio:9000
+      - Minio__AccessKey=minioadmin          # CHANGE ME – use .env
+      - Minio__SecretKey=minioadmin          # CHANGE ME
+      # KKLoader endpoint
+      - KKLoaderService__BaseUrl=http://kkloader:8000/
+      # JWT settings (use secrets or .env for the key)
+      - Jwt__Key=${JWT_KEY:-your-very-long-secret-key-must-be-32+chars}
+      - Jwt__Issuer=${JWT_ISSUER:-anicard-api}
+      - Jwt__Audience=${JWT_AUDIENCE:-anicard-client}
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      kkloader:
+        condition: service_healthy
+    networks:
+      - app-network
+    # Optional: resource limits
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1'
+    #       memory: 512M
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:      # named volume for database persistence
+
+secrets:
+  db-password:
+    file: ./secrets/db-password.txt   # create this file with the raw password

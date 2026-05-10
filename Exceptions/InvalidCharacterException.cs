@@ -1,4 +1,4 @@
-namespace AniCard.Models.Exceptions
+namespace AniCard.Exceptions
 {
     public class InvalidCharacterException : Exception
     {
