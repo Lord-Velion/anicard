@@ -4,7 +4,7 @@ using System.Net.Http;
 
 namespace AniCard.Services
 {
-    public class KKLoaderService : IKKLoaderService
+    public class KKLoaderService
     {
         private readonly HttpClient _httpClient;
 

@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AniCard.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService
     {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;

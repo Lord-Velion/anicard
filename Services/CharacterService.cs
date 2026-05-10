@@ -3,13 +3,13 @@ using AniCard.Repositories;
 
 namespace AniCard.Services
 {
-    public class CharacterService : ICharacterService
+    public class CharacterService
     {
-        private readonly IKKLoaderService _kkLoaderService;
-        private readonly ICharacterFileRepository _fileRepository;
-        private readonly ICharacterRepository _characterRepository;
+        private readonly KKLoaderService _kkLoaderService;
+        private readonly CharacterFileRepository _fileRepository;
+        private readonly CharacterRepository _characterRepository;
 
-        public CharacterService(IKKLoaderService kkLoaderService, ICharacterFileRepository fileRepository, ICharacterRepository characterRepository)
+        public CharacterService(KKLoaderService kkLoaderService, CharacterFileRepository fileRepository, CharacterRepository characterRepository)
         {
             _kkLoaderService = kkLoaderService;
             _fileRepository = fileRepository;

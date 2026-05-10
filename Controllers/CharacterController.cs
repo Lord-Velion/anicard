@@ -12,10 +12,10 @@ namespace AniCard.Controllers
     [ApiController]
     public class CharacterController : ControllerBase
     {
-        private readonly ICharacterService _characterService;
-        private readonly IPngValidatorService _pngValidatorService;
+        private readonly CharacterService _characterService;
+        private readonly PngValidatorService _pngValidatorService;
 
-        public CharacterController(ICharacterService characterService, IPngValidatorService pngValidatorService)
+        public CharacterController(CharacterService characterService, PngValidatorService pngValidatorService)
         {
             _characterService = characterService;
             _pngValidatorService = pngValidatorService;

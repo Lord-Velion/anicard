@@ -2,7 +2,7 @@ using AniCard.Models.DTOs;
 
 namespace AniCard.Services
 {
-    public class PngValidatorService : IPngValidatorService
+    public class PngValidatorService
     {
         public ValidationResult ValidateCharacter(IFormFile file)
         {

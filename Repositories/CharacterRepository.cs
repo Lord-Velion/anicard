@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AniCard.Repositories
 {
-    public class CharacterRepository : ICharacterRepository
+    public class CharacterRepository
     {
         private readonly AppDbContext _context;
 

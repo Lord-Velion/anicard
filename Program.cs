@@ -58,12 +58,12 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICharacterService, CharacterService>();
-builder.Services.AddScoped<IPngValidatorService, PngValidatorService>();
-builder.Services.AddScoped<ICharacterFileRepository, CharacterFileRepository>();
-builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
-builder.Services.AddHttpClient<IKKLoaderService, KKLoaderService>(client =>
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<CharacterService>();
+builder.Services.AddScoped<PngValidatorService>();
+builder.Services.AddScoped<CharacterFileRepository>();
+builder.Services.AddScoped<CharacterRepository>();
+builder.Services.AddHttpClient<KKLoaderService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["KKLoaderService:BaseUrl"]);
 });
