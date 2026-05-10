@@ -1,5 +1,5 @@
 using AniCard.Models.DTOs;
-using AniCard.Models.Exceptions;
+using AniCard.Exceptions;
 using System.Net.Http;
 
 namespace AniCard.Services

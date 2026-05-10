@@ -60,6 +60,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddScoped<IPngValidatorService, PngValidatorService>();
 builder.Services.AddScoped<ICharacterFileRepository, CharacterFileRepository>();
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 builder.Services.AddHttpClient<IKKLoaderService, KKLoaderService>(client =>

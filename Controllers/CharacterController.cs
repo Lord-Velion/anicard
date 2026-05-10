@@ -13,10 +13,12 @@ namespace AniCard.Controllers
     public class CharacterController : ControllerBase
     {
         private readonly ICharacterService _characterService;
+        private readonly IPngValidatorService _pngValidatorService;
 
-        public CharacterController(ICharacterService characterService)
+        public CharacterController(ICharacterService characterService, IPngValidatorService pngValidatorService)
         {
             _characterService = characterService;
+            _pngValidatorService = pngValidatorService;
         }
 
         [HttpPost("upload")]
@@ -27,12 +29,9 @@ namespace AniCard.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (dto.File == null || dto.File.Length == 0)
-                return BadRequest("File is required.");
-
-            var fileExtension = Path.GetExtension(dto.File.FileName).ToLowerInvariant();
-            if (fileExtension != ".png")
-                return BadRequest("Only PNG files are allowed.");
+            var validationResult = _pngValidatorService.ValidateCharacter(dto.File);
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.ErrorMessage);
 
             try
             {
@@ -51,6 +50,10 @@ namespace AniCard.Controllers
             catch (InvalidCharacterException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An unexpected error occurred. Please try again later.");
             }
         }
     }
