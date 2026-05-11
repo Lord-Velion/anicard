@@ -63,10 +63,17 @@ builder.Services.AddScoped<CharacterService>();
 builder.Services.AddScoped<PngValidatorService>();
 builder.Services.AddScoped<CharacterFileRepository>();
 builder.Services.AddScoped<CharacterRepository>();
+
+
+var baseUrl = builder.Configuration["KKLoaderService:BaseUrl"]
+    ?? throw new InvalidOperationException(
+        "Configuration 'KKLoaderService:BaseUrl' is missing. Add it to appsettings.json or environment variables.");
+
 builder.Services.AddHttpClient<KKLoaderService>(client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["KKLoaderService:BaseUrl"]);
+    client.BaseAddress = new Uri(baseUrl);
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

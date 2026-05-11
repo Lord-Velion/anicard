@@ -120,4 +120,6 @@ src/.vs/config/applicationhost.config
 # Project-specific folders
 Design/
 
+minio/
+
 AGENTS.md
