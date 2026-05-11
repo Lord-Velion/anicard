@@ -1,0 +1,82 @@
+﻿services:
+  db:
+    image: postgres:16-alpine
+    container_name: anicard-postgres
+    restart: unless-stopped
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=anicard
+      - POSTGRES_USER=anicard
+      - POSTGRES_PASSWORD=anicard
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "anicard"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: anicard-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Web Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./minio/data:/mnt/data           # bind mount (easy access on host)
+    command: server /mnt/data --console-address ":9001"
+    networks:
+      - app-network
+
+  kkloader:
+    image: velion/koikatsu-card-service:latest
+    container_name: anicard-kkloader
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - app-network
+
+  server:
+    build:
+      context: .
+      target: final
+    container_name: anicard-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - KKLoaderService__BaseUrl=http://kkloader:8000
+      - Minio__Endpoint=minio:9000
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      kkloader:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  db-data:
+    

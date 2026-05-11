@@ -4,7 +4,7 @@ namespace AniCard.Services
 {
     public class PngValidatorService
     {
-        public ValidationResult ValidateCharacter(IFormFile file)
+        public ValidationResult ValidateCharacterFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return ValidationResult.Failure("File is required.");

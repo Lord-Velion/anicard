@@ -14,7 +14,7 @@ namespace AniCard.Repositories
             _context = context;
         }
 
-        public async Task<Character> UploadCharacterAsync(CharacterMetadataResult metadata, string objectKey, string description, string[] tags, string userId)
+        public async Task<Character> UploadCharacterAsync(CharacterMetadataResult metadata, string objectKey, string? description, string[]? tags, string userId)
         {
             var character = new Character
             {

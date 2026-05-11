@@ -10,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using AniCard.Repositories;
 using AniCard.Services;
+using AniCard.Configuration;
+using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,16 +59,39 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.Configure<MinioSettings>(
+    builder.Configuration.GetSection("Minio"));
+
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CharacterService>();
 builder.Services.AddScoped<PngValidatorService>();
 builder.Services.AddScoped<CharacterFileRepository>();
 builder.Services.AddScoped<CharacterRepository>();
+
+builder.Services.AddSingleton(sp =>
+{
+    var settings = builder.Configuration
+        .GetSection("Minio")
+        .Get<MinioSettings>()!;
+
+    return new MinioClient()
+        .WithEndpoint(settings.Endpoint)
+        .WithCredentials(settings.AccessKey, settings.SecretKey)
+        .WithSSL(settings.UseSSL)
+        .Build();
+});
+
+
+var baseUrl = builder.Configuration["KKLoaderService:BaseUrl"]
+    ?? throw new InvalidOperationException(
+        "Configuration 'KKLoaderService:BaseUrl' is missing. Add it to appsettings.json or environment variables.");
+
 builder.Services.AddHttpClient<KKLoaderService>(client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["KKLoaderService:BaseUrl"]);
+    client.BaseAddress = new Uri(baseUrl);
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

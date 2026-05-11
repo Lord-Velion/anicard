@@ -29,7 +29,7 @@ namespace AniCard.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var validationResult = _pngValidatorService.ValidateCharacter(dto.File);
+            var validationResult = _pngValidatorService.ValidateCharacterFile(dto.File);
             if (!validationResult.IsValid)
                 return BadRequest(validationResult.ErrorMessage);
 
