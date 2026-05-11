@@ -10,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using AniCard.Repositories;
 using AniCard.Services;
+using AniCard.Configuration;
+using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,12 +59,28 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.Configure<MinioSettings>(
+    builder.Configuration.GetSection("Minio"));
+
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CharacterService>();
 builder.Services.AddScoped<PngValidatorService>();
 builder.Services.AddScoped<CharacterFileRepository>();
 builder.Services.AddScoped<CharacterRepository>();
+
+builder.Services.AddSingleton(sp =>
+{
+    var settings = builder.Configuration
+        .GetSection("Minio")
+        .Get<MinioSettings>()!;
+
+    return new MinioClient()
+        .WithEndpoint(settings.Endpoint)
+        .WithCredentials(settings.AccessKey, settings.SecretKey)
+        .WithSSL(settings.UseSSL)
+        .Build();
+});
 
 
 var baseUrl = builder.Configuration["KKLoaderService:BaseUrl"]
