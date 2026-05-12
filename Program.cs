@@ -82,7 +82,6 @@ builder.Services.AddSingleton(sp =>
         .Build();
 });
 
-
 var baseUrl = builder.Configuration["KKLoaderService:BaseUrl"]
     ?? throw new InvalidOperationException(
         "Configuration 'KKLoaderService:BaseUrl' is missing. Add it to appsettings.json or environment variables.");
