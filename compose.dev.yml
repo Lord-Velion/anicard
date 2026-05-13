@@ -7,13 +7,13 @@
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=anicard
+      - POSTGRES_DB=anicard_db
       - POSTGRES_USER=anicard
       - POSTGRES_PASSWORD=anicard
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "anicard"]
+      test: ["CMD", "pg_isready", "-U", "anicard", "-d", "anicard_db"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -64,6 +64,7 @@
       - ASPNETCORE_URLS=http://+:8080
       - KKLoaderService__BaseUrl=http://kkloader:8000
       - Minio__Endpoint=minio:9000
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=anicard_db;Username=anicard;Password=anicard
     depends_on:
       db:
         condition: service_healthy
