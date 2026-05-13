@@ -4,6 +4,7 @@ using AniCard.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
 namespace AniCard.Controllers
@@ -14,11 +15,13 @@ namespace AniCard.Controllers
     {
         private readonly CharacterService _characterService;
         private readonly PngValidatorService _pngValidatorService;
+        private readonly ILogger<CharacterController> _logger;
 
-        public CharacterController(CharacterService characterService, PngValidatorService pngValidatorService)
+        public CharacterController(CharacterService characterService, PngValidatorService pngValidatorService, ILogger<CharacterController> logger)
         {
             _characterService = characterService;
             _pngValidatorService = pngValidatorService;
+            _logger = logger;
         }
 
         [HttpPost("upload")]
@@ -27,18 +30,26 @@ namespace AniCard.Controllers
         public async Task<IActionResult> UploadCharacter([FromForm] CharacterUploadDto dto)
         {
             if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("UploadCharacter: invalid model state for file {FileName}", dto.File?.FileName);
                 return BadRequest(ModelState);
+            }
 
             var validationResult = _pngValidatorService.ValidateCharacterFile(dto.File);
             if (!validationResult.IsValid)
+            {
+                _logger.LogWarning("UploadCharacter: validation failed for file {FileName}: {ErrorMessage}", dto.File?.FileName, validationResult.ErrorMessage);
                 return BadRequest(validationResult.ErrorMessage);
+            }
 
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                             ?? throw new InvalidOperationException("User ID not found in token.");
+                _logger.LogInformation("UploadCharacter started for user {UserId} with file {FileName} ({FileSize} bytes)", userId, dto.File?.FileName, dto.File?.Length);
                 await _characterService.UploadCharacterAsync(dto, userId);
 
+                _logger.LogInformation("UploadCharacter succeeded for user {UserId} with file {FileName}", userId, dto.File?.FileName);
                 return Ok(new
                 {
                     message = "Upload successful",
@@ -49,10 +60,12 @@ namespace AniCard.Controllers
             }
             catch (InvalidCharacterException ex)
             {
+                _logger.LogWarning(ex, "UploadCharacter failed validation in KKLoader for file {FileName}", dto.File?.FileName);
                 return BadRequest(ex.Message);
             }
             catch (Exception)
             {
+                _logger.LogError("UploadCharacter failed with unexpected error for file {FileName}", dto.File?.FileName);
                 return StatusCode(500, "An unexpected error occurred. Please try again later.");
             }
         }
