@@ -1,5 +1,4 @@
 ﻿using AniCard.Services;
-using Castle.Core.Logging;
 using Moq;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
