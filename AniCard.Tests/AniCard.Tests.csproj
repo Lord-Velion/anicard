@@ -35,11 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="IntegrationTests\" />
     <Folder Include="E2ETests\" />
     <Folder Include="UnitTests\Controllers\" />
     <Folder Include="UnitTests\Mocks\" />
-    <Folder Include="UnitTests\Services\" />
   </ItemGroup>
 
 </Project>

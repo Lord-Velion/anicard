@@ -1,4 +1,5 @@
 using AniCard.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;
@@ -9,18 +10,22 @@ namespace AniCard.Repositories
     {
         private readonly IMinioClient _minioClient;
         private readonly MinioSettings _settings;
+        private readonly ILogger<CharacterFileRepository> _logger;
 
         public CharacterFileRepository(
             IMinioClient minioClient,
-            IOptions<MinioSettings> settings)
+            IOptions<MinioSettings> settings,
+            ILogger<CharacterFileRepository> logger)
         {
             _minioClient = minioClient;
             _settings = settings.Value;
+            _logger = logger;
         }
 
         public async Task<string> UploadCharacterAsync(IFormFile file)
         {
             var objectKey = $"{Guid.NewGuid()}-{file.FileName}";
+            _logger.LogInformation("MinIO upload started for file {FileName} with object key {ObjectKey}", file.FileName, objectKey);
 
             var bucketExists = await _minioClient.BucketExistsAsync(
                 new BucketExistsArgs()
@@ -28,6 +33,7 @@ namespace AniCard.Repositories
 
             if (!bucketExists)
             {
+                _logger.LogInformation("MinIO bucket {BucketName} not found. Creating bucket.", _settings.BucketName);
                 await _minioClient.MakeBucketAsync(
                     new MakeBucketArgs()
                     .WithBucket(_settings.BucketName));
@@ -43,6 +49,7 @@ namespace AniCard.Repositories
                     .WithObjectSize(stream.Length)
                     .WithContentType(file.ContentType));
 
+            _logger.LogInformation("MinIO upload completed for object key {ObjectKey}", objectKey);
             return objectKey;
         }
     }
