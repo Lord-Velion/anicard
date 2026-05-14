@@ -44,7 +44,15 @@ Some description
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="Tags"
 
-string,string,string
+a
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="Tags"
+
+b
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="Tags"
+
+c
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="File"; filename="Koikatu_F_20250918135054699_Hiiragi Konomi.png"
 Content-Type: image/png

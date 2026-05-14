@@ -33,9 +33,8 @@ namespace AniCard.Repositories
             if (tags != null && tags.Length > 0)
             {
                 _logger.LogDebug("Processing {TagCount} tags for user {UserId}", tags.Length, userId);
-                var uniqueTags = tags.Select(t => t.Trim())
-                                    .Where(t => !string.IsNullOrEmpty(t))
-                                    .Distinct();
+                 var uniqueTags = tags.SelectMany(t => t.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+                    .Distinct(StringComparer.OrdinalIgnoreCase);
 
                 foreach (var tagName in uniqueTags)
                 {
