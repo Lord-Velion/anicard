@@ -1,8 +1,8 @@
 # AniCard is run in IDE
-#@AniCard_HostAddress = http://localhost:5145/
+@AniCard_HostAddress = http://localhost:5145/
 
 # AniCard is run in Docker Container
-@AniCard_HostAddress = http://localhost:8080/
+#@AniCard_HostAddress = http://localhost:8080/
 
 @authEndpoint = {{AniCard_HostAddress}}api/v1/auth
 @characterEndpoint = {{AniCard_HostAddress}}api/character
