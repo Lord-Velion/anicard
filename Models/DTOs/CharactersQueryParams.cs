@@ -36,7 +36,7 @@
     public class CharactersQueryParams
     {
         public CharacterFilter Filter { get; set; } = new();
-        public OrderByField OrderBy { get; set; } = OrderByField.Date;
+        public OrderByField OrderBy { get; set; } = OrderByField.Downloads;
         public SortOrder Sort { get; set; } = SortOrder.Desc;
         public PaginationParams Pagination { get; set; } = new();
     }
