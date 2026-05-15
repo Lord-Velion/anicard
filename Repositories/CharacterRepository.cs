@@ -53,5 +53,15 @@ namespace AniCard.Repositories
             _logger.LogInformation("Character saved with id {CharacterId} for user {UserId}", character.Id, userId);
             return character;
         }
+
+        public async Task<List<Character>> GetCharactersAsync(CharactersQueryParams queryParams)
+        {
+            var characters = await _context.Characters
+                .Include(c => c.User)
+                .Include(c => c.Tags)
+                .ToListAsync();
+
+            return characters;
+        }
     }
 }
