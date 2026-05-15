@@ -402,4 +402,68 @@ public class CharacterRepositoryTests
         Assert.Equal(expectedFirst, result[0].Name);
         Assert.Equal(expectedLast, result[^1].Name);
     }
+
+    [Fact]
+    public async Task GetCharactersAsync_Pagination_FirstPage_ReturnsFirstNItems()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Pagination = new PaginationParams { PageNumber = 1, PageSize = 4 }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(4, result.Count);
+        Assert.Equal("ActionStar", result[0].Name);
+        Assert.Equal("ZephyrChar", result[3].Name);
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_Pagination_SecondPage_ReturnsNextItems()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Pagination = new PaginationParams { PageNumber = 2, PageSize = 4 }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(4, result.Count);
+        Assert.Equal("TestChar", result[0].Name);
+        Assert.Equal("AlphaMale", result[3].Name);
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_Pagination_PageBeyondLast_ReturnsEmpty()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Pagination = new PaginationParams { PageNumber = 4, PageSize = 4 }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_Pagination_DifferentPageSize_ReturnsCorrectCount()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Pagination = new PaginationParams { PageNumber = 1, PageSize = 10 }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(10, result.Count);
+    }
 }
