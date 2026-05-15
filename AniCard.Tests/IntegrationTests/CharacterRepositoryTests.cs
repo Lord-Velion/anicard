@@ -240,6 +240,37 @@ public class CharacterRepositoryTests
     }
 
     [Fact]
+    public async Task GetCharactersAsync_FilterByPersonality_SpecificPersonality_ReturnsMatching()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { Personality = 1 }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(4, result.Count);
+        Assert.All(result, c => Assert.Equal(1, c.Personality));
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_FilterByPersonality_Null_ReturnsAll()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter()
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(10, result.Count);
+    }
+
+    [Fact]
     public async Task GetCharactersAsync_FilterByCreatorName()
     {
         await Task.CompletedTask;
