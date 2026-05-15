@@ -73,6 +73,7 @@ namespace AniCard.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCharacter([FromQuery] CharactersQueryParams queryParams)
         {
             var result = await _characterRepository.GetCharactersAsync(queryParams);

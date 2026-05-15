@@ -54,12 +54,23 @@ namespace AniCard.Repositories
             return character;
         }
 
-        public async Task<List<Character>> GetCharactersAsync(CharactersQueryParams queryParams)
+        public async Task<List<CharacterGetDto>> GetCharactersAsync(CharactersQueryParams queryParams)
         {
             var characters = await _context.Characters
                 .Include(c => c.User)
                 .Include(c => c.Tags)
-                .ToListAsync();
+                .Select(c => new CharacterGetDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description,
+                    Sex = c.Sex,
+                    Personality = c.Personality,
+                    Downloads = c.Downloads,
+                    UploadedAt = c.UploadedAt,
+                    TagNames = c.Tags.Select(t => t.Name).ToList(),
+                    UserName = c.User != null ? c.User.UserName : null
+                }).ToListAsync();
 
             return characters;
         }
