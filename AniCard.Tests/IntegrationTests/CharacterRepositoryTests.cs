@@ -209,9 +209,34 @@ public class CharacterRepositoryTests
     }
 
     [Fact]
-    public async Task GetCharactersAsync_FilterBySex()
+    public async Task GetCharactersAsync_FilterBySex_SpecificSex_ReturnsMatching()
     {
-        await Task.CompletedTask;
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { Sex = 0 }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(5, result.Count);
+        Assert.All(result, c => Assert.Equal(0, c.Sex));
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_FilterBySex_Null_ReturnsAll()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter()
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(10, result.Count);
     }
 
     [Fact]
