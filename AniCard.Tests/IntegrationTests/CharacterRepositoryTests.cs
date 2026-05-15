@@ -301,6 +301,54 @@ public class CharacterRepositoryTests
         Assert.Empty(result);
     }
 
+    [Fact]
+    public async Task GetCharactersAsync_FilterByCombined_NameTagsSex_ReturnsIntersection()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { Name = "Char", Tags = ["anime"], Sex = 0 }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(3, result.Count);
+        Assert.Contains(result, c => c.Name == "TestChar");
+        Assert.Contains(result, c => c.Name == "AliceChar");
+        Assert.Contains(result, c => c.Name == "ZephyrChar");
+        Assert.All(result, c =>
+        {
+            Assert.Equal(0, c.Sex);
+            Assert.Contains("anime", c.TagNames);
+        });
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_FilterByCombined_AllFilters_ReturnsIntersection()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { Name = "Char", Tags = ["anime"], Sex = 0, Personality = 1, UserName = "Ali" }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(3, result.Count);
+        Assert.Contains(result, c => c.Name == "TestChar");
+        Assert.Contains(result, c => c.Name == "AliceChar");
+        Assert.Contains(result, c => c.Name == "ZephyrChar");
+        Assert.All(result, c =>
+        {
+            Assert.Equal(0, c.Sex);
+            Assert.Equal(1, c.Personality);
+            Assert.Contains("anime", c.TagNames);
+            Assert.Contains("Ali", c.UserName);
+        });
+    }
+
     [Theory]
     [InlineData("Asc")]
     [InlineData("Desc")]
