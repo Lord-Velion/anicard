@@ -271,9 +271,34 @@ public class CharacterRepositoryTests
     }
 
     [Fact]
-    public async Task GetCharactersAsync_FilterByCreatorName()
+    public async Task GetCharactersAsync_FilterByCreatorName_PartialMatch_ReturnsMatching()
     {
-        await Task.CompletedTask;
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { UserName = "Ali" }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(4, result.Count);
+        Assert.All(result, c => Assert.Contains("Ali", c.UserName));
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_FilterByCreatorName_NonExistent_ReturnsEmpty()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { UserName = "NonExistentUser" }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Empty(result);
     }
 
     [Theory]
