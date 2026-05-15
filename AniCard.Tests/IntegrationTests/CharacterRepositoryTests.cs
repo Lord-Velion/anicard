@@ -107,10 +107,52 @@ public class CharacterRepositoryTests
     }
 
     [Fact]
-    public async Task GetCharactersAsync_FilterByNameParam()
+    public async Task GetCharactersAsync_FilterByName_ValidSubstring_ReturnsMatching()
     {
+        await SeedTestDataAsync();
 
-        await Task.CompletedTask;
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { Name = "Char" }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(4, result.Count);
+        Assert.Contains(result, c => c.Name == "TestChar");
+        Assert.Contains(result, c => c.Name == "AnotherChar");
+        Assert.Contains(result, c => c.Name == "AliceChar");
+        Assert.Contains(result, c => c.Name == "ZephyrChar");
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_FilterByName_EmptyString_ReturnsAll()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { Name = "" }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(10, result.Count);
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_FilterByName_NoMatch_ReturnsEmpty()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { Name = "NonExistentName" }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Empty(result);
     }
 
     [Fact]
