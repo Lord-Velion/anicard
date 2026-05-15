@@ -156,9 +156,56 @@ public class CharacterRepositoryTests
     }
 
     [Fact]
-    public async Task GetCharactersAsync_FilterByTags()
+    public async Task GetCharactersAsync_FilterByTags_SingleTag_ReturnsMatching()
     {
-        await Task.CompletedTask;
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { Tags = ["anime"] }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(5, result.Count);
+        Assert.All(result, c => Assert.Contains("anime", c.TagNames));
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_FilterByTags_MultipleTags_ReturnsIntersection()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { Tags = ["anime", "action"] }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, c => c.Name == "ActionStar");
+        Assert.Contains(result, c => c.Name == "BobCreation");
+        Assert.All(result, c =>
+        {
+            Assert.Contains("anime", c.TagNames);
+            Assert.Contains("action", c.TagNames);
+        });
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_FilterByTags_NonExistent_ReturnsEmpty()
+    {
+        await SeedTestDataAsync();
+
+        var queryParams = new CharactersQueryParams
+        {
+            Filter = new CharacterFilter { Tags = ["NonExistentTag"] }
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Empty(result);
     }
 
     [Fact]
