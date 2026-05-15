@@ -349,19 +349,57 @@ public class CharacterRepositoryTests
         });
     }
 
-    [Theory]
-    [InlineData("Asc")]
-    [InlineData("Desc")]
-    public async Task GetCharactersAsync_SortByDownloads(string order)
+    [Fact]
+    public async Task GetCharactersAsync_DefaultOrder_IsDownloadsDesc()
     {
-        await Task.CompletedTask;
+        await SeedTestDataAsync();
+
+        var result = await _repo.GetCharactersAsync(new CharactersQueryParams());
+
+        Assert.Equal(10, result.Count);
+        Assert.Equal("ActionStar", result[0].Name);
+        Assert.Equal("MysteryFig", result[9].Name);
     }
 
     [Theory]
-    [InlineData("Asc")]
-    [InlineData("Desc")]
-    public async Task GetCharactersAsync_SortByDate(string order)
+    [InlineData("Asc", "MysteryFig", "ActionStar")]
+    [InlineData("Desc", "ActionStar", "MysteryFig")]
+    public async Task GetCharactersAsync_SortByDownloads(string order, string expectedFirst, string expectedLast)
     {
-        await Task.CompletedTask;
+        await SeedTestDataAsync();
+
+        var sortOrder = order == "Asc" ? SortOrder.Asc : SortOrder.Desc;
+        var queryParams = new CharactersQueryParams
+        {
+            OrderBy = OrderByField.Downloads,
+            Sort = sortOrder
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(10, result.Count);
+        Assert.Equal(expectedFirst, result[0].Name);
+        Assert.Equal(expectedLast, result[^1].Name);
+    }
+
+    [Theory]
+    [InlineData("Asc", "TestChar", "AlphaMale")]
+    [InlineData("Desc", "AlphaMale", "TestChar")]
+    public async Task GetCharactersAsync_SortByDate(string order, string expectedFirst, string expectedLast)
+    {
+        await SeedTestDataAsync();
+
+        var sortOrder = order == "Asc" ? SortOrder.Asc : SortOrder.Desc;
+        var queryParams = new CharactersQueryParams
+        {
+            OrderBy = OrderByField.Date,
+            Sort = sortOrder
+        };
+
+        var result = await _repo.GetCharactersAsync(queryParams);
+
+        Assert.Equal(10, result.Count);
+        Assert.Equal(expectedFirst, result[0].Name);
+        Assert.Equal(expectedLast, result[^1].Name);
     }
 }
