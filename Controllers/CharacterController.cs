@@ -79,5 +79,29 @@ namespace AniCard.Controllers
             var result = await _characterRepository.GetCharactersAsync(queryParams);
             return Ok(result);
         }
+
+        [HttpGet("download/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DownloadCharacter(string id)
+        {
+            _logger.LogInformation("DownloadCharacter started for character ID: {CharacterId}", id);
+            try
+            {
+                var (fileStream, fileName) = await _characterService.DownloadCharacterAsync(id);
+
+                _logger.LogInformation("DownloadCharacter succeeded for character ID: {CharacterId}, FileName: {FileName}", id, fileName);
+                return File(fileStream, "image/png", fileName);
+            }
+            catch(KeyNotFoundException)
+            {
+                _logger.LogWarning("DownloadCharacter failed: Character with ID '{CharacterId}' not found.", id);
+                return NotFound($"Character with id '{id}' not found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "DownloadCharacter failed with unexpected error for character ID: {CharacterId}", id);
+                return StatusCode(500, "An error occurred while downloading the character.");
+            }         
+        }
     }
 }

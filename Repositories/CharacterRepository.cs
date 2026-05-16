@@ -128,5 +128,26 @@ namespace AniCard.Repositories
 
             return characters;
         }
+    
+        public async Task<string?> GetObjectKeyAsync(string id)
+        {
+            _logger.LogInformation("Retrieving object key for character ID {CharacterId}", id);
+
+            var objectKey = await _context.Characters
+                .Where(c => c.Id == id)
+                .Select(c => c.ObjectKeyId)
+                .FirstOrDefaultAsync();
+
+            if (objectKey == null)
+            {
+                _logger.LogWarning("No object key found for character ID {CharacterId}", id);
+            } 
+            else
+            {
+                _logger.LogDebug("Found object key {ObjectKey} for character ID {CharacterId}", objectKey, id);
+            }
+
+            return objectKey;
+        }
     }
 }

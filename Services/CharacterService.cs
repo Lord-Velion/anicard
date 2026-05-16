@@ -32,5 +32,25 @@ namespace AniCard.Services
             var character = await _characterRepository.UploadCharacterAsync(metadata, objectKey, dto.Description, dto.Tags, userId);
             _logger.LogInformation("Character saved to database for user {UserId} with character id {CharacterId}", userId, character.Id);
         }
+
+        public async Task<(Stream FileStream, string CardName)> DownloadCharacterAsync(string id)
+        {
+            _logger.LogInformation("Downloading character with ID {CharacterId}", id);
+
+            string? objectKey = await _characterRepository.GetObjectKeyAsync(id);
+            _logger.LogDebug("Retrieved object key for character {CharacterId}: {ObjectKey}", id, objectKey ?? "null");
+
+            if (objectKey is null)
+            {
+                _logger.LogWarning("Character with ID {CharacterId} not found in repository", id);
+                throw new KeyNotFoundException($"Character with id '{id}' not found.");
+            }
+
+            _logger.LogInformation("Fetching file for character {CharacterId} using object key {ObjectKey}", id, objectKey);
+            var result = await _fileRepository.DownloadCharacterAsync(objectKey);
+
+            _logger.LogInformation("Successfully downloaded character {CharacterId} with card name {CardName}", id, result.CardName);
+            return result;
+        }
     }
 }

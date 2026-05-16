@@ -52,5 +52,25 @@ namespace AniCard.Repositories
             _logger.LogInformation("MinIO upload completed for object key {ObjectKey}", objectKey);
             return objectKey;
         }
+
+        public async Task<(Stream FileStream, string CardName)> DownloadCharacterAsync(string objectKey)
+        {
+            _logger.LogInformation("MinIO download started for object key {ObjectKey}", objectKey);
+
+            var cardName = objectKey;
+
+            var memoryStream = new MemoryStream();
+
+            await _minioClient.GetObjectAsync(
+                new GetObjectArgs()
+                    .WithBucket(_settings.BucketName)
+                    .WithObject(objectKey)
+                    .WithCallbackStream(stream => stream.CopyTo(memoryStream)));
+
+            memoryStream.Position = 0;
+
+            _logger.LogInformation("MinIO download completed for object key {ObjectKey}", objectKey);
+            return (memoryStream, cardName);
+        }
     }
 }
