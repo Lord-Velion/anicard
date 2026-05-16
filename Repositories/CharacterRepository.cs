@@ -56,6 +56,10 @@ namespace AniCard.Repositories
 
         public async Task<List<CharacterGetDto>> GetCharactersAsync(CharactersQueryParams queryParams)
         {
+            _logger.LogInformation("GetCharacters: Name={Name}, Tags={Tags}, Sex={Sex}, Personality={Personality}, UserName={UserName}, OrderBy={OrderBy} {Sort}, Page={PageNumber} Size={PageSize}",
+                queryParams.Filter.Name, queryParams.Filter.Tags, queryParams.Filter.Sex, queryParams.Filter.Personality, queryParams.Filter.UserName,
+                queryParams.OrderBy, queryParams.Sort, queryParams.Pagination.PageNumber, queryParams.Pagination.PageSize);
+
             var query = _context.Characters.AsQueryable();
 
             // Filter by name (case-insensitive substring match)
@@ -119,6 +123,8 @@ namespace AniCard.Repositories
                     TagNames = c.Tags.Select(t => t.Name).ToList(),
                     UserName = c.User != null ? c.User.UserName : null
                 }).ToListAsync();
+
+            _logger.LogInformation("GetCharacters: returning {Count} results", characters.Count);
 
             return characters;
         }

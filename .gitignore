@@ -122,4 +122,5 @@ Design/
 
 minio/
 
-AGENTS.md*.lscache
+AGENTS.md
+*.lscache
