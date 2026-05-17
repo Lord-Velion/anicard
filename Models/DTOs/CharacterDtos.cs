@@ -1,9 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+using AniCard.Attributes;
+
 namespace AniCard.Models.DTOs
 {
     public class CharacterUploadDto
     {
+        [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
         public string? Description { get; set; }
+
+        [TagList(MaxTags = 10, MaxTagLength = 50, ErrorMessage = "Invalid tags.")]
         public string[]? Tags { get; set; }
+
         public required IFormFile File { get; set; }
     }
 
