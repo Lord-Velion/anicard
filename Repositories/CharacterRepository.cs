@@ -30,23 +30,7 @@ namespace AniCard.Repositories
                 UserId = userId
             };
 
-            if (tags != null && tags.Length > 0)
-            {
-                _logger.LogDebug("Processing {TagCount} tags for user {UserId}", tags.Length, userId);
-                 var uniqueTags = tags.SelectMany(t => t.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
-                    .Distinct(StringComparer.OrdinalIgnoreCase);
-
-                foreach (var tagName in uniqueTags)
-                {
-                    var existingTag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
-                    if (existingTag == null)
-                    {
-                        existingTag = new Tag { Name = tagName };
-                        _context.Tags.Add(existingTag);
-                    }
-                    character.Tags.Add(existingTag);
-                }
-            }
+            character = await SetCharacterTags(character, tags, userId);
 
             _context.Characters.Add(character);
             await _context.SaveChangesAsync();
@@ -172,6 +156,49 @@ namespace AniCard.Repositories
 
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<Character?> PatchCharacterAsync(string userId, string characterId, string? description, string[]? tags)
+        {
+            var character = await _context.Characters
+                .Include(c => c.Tags)
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.Id == characterId);
+
+            if (character != null)
+            {
+                if (description != null)
+                    character.Description = description;
+
+                character.Tags.Clear();
+
+                character = await SetCharacterTags(character, tags, userId);
+
+                await _context.SaveChangesAsync();
+            }
+
+            return character;
+        }
+
+        private async Task<Character> SetCharacterTags(Character character, string[]? tags, string userId)
+        {
+            if (tags != null && tags.Length > 0)
+            {
+                _logger.LogDebug("Processing {TagCount} tags for user {UserId}", tags.Length, userId);
+                var uniqueTags = tags.SelectMany(t => t.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+                   .Distinct(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var tagName in uniqueTags)
+                {
+                    var existingTag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
+                    if (existingTag == null)
+                    {
+                        existingTag = new Tag { Name = tagName };
+                        _context.Tags.Add(existingTag);
+                    }
+                    character.Tags.Add(existingTag);
+                }
+            }
+            return character;
         }
     }
 }

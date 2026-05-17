@@ -115,5 +115,16 @@ namespace AniCard.Controllers
 
             return Ok();
         }
+
+        [HttpPatch("patch/{id}")]
+        [Authorize]
+        public async Task<IActionResult> PatchCharacter(string id, [FromQuery] string? description, [FromQuery] string[]? tags)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _characterService.PatchCharacterAsync(userId, id, description, tags);
+
+            return Ok();
+        }
+
     }
 }

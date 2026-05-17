@@ -1,6 +1,7 @@
 using AniCard.Models.DTOs;
 using AniCard.Repositories;
 using Microsoft.Extensions.Logging;
+using AniCard.Models.Entities;
 
 namespace AniCard.Services
 {
@@ -65,6 +66,11 @@ namespace AniCard.Services
             await _characterRepository.DeleteCharacterAsync(characterId, userId);
 
             await _fileRepository.DeleteCharacterAsync(objectKey);
+        }
+
+        public async Task PatchCharacterAsync(string userId, string characterId, string? description, string[]? tags)
+        {
+            await _characterRepository.PatchCharacterAsync(userId, characterId, description, tags);
         }
     }
 }
