@@ -29,6 +29,7 @@ namespace AniCard.Controllers
         [HttpPost("upload")]
         [Authorize]
         [Consumes("multipart/form-data")]
+        [RequestSizeLimit(10_485_760)]
         public async Task<IActionResult> UploadCharacter([FromForm] CharacterUploadDto dto)
         {
             if (!ModelState.IsValid)
