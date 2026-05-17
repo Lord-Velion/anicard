@@ -129,25 +129,49 @@ namespace AniCard.Repositories
             return characters;
         }
     
-        public async Task<string?> GetObjectKeyAsync(string id)
+        public async Task<string?> GetObjectKeyAsync(string characterId)
         {
-            _logger.LogInformation("Retrieving object key for character ID {CharacterId}", id);
+            _logger.LogInformation("Retrieving object key for character ID {CharacterId}", characterId);
 
             var objectKey = await _context.Characters
-                .Where(c => c.Id == id)
+                .Where(c => c.Id == characterId)
                 .Select(c => c.ObjectKeyId)
                 .FirstOrDefaultAsync();
 
             if (objectKey == null)
             {
-                _logger.LogWarning("No object key found for character ID {CharacterId}", id);
+                _logger.LogWarning("No object key found for character ID {CharacterId}", characterId);
             } 
             else
             {
-                _logger.LogDebug("Found object key {ObjectKey} for character ID {CharacterId}", objectKey, id);
+                _logger.LogDebug("Found object key {ObjectKey} for character ID {CharacterId}", objectKey, characterId);
             }
 
             return objectKey;
+        }
+
+        public async Task<string?> GetObjectKeyAsync(string characterId, string userId)
+        {
+            var objectKey = await _context.Characters
+                .Where(c => c.Id == characterId)
+                .Where(c => c.UserId == userId)
+                .Select(c => c.ObjectKeyId)
+                .FirstOrDefaultAsync();
+
+            return objectKey;
+        }
+
+        public async Task DeleteCharacterAsync(string characterId, string userId)
+        {
+            var record = await _context.Characters
+                .FirstOrDefaultAsync(c => c.Id == characterId && c.UserId == userId);
+
+            if (record != null)
+            {
+                _context.Characters.Remove(record);
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

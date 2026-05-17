@@ -72,5 +72,16 @@ namespace AniCard.Repositories
             _logger.LogInformation("MinIO download completed for object key {ObjectKey}", objectKey);
             return (memoryStream, cardName);
         }
+
+        public async Task DeleteCharacterAsync(string objectKey)
+        {
+            _logger.LogInformation("Deleting objec {ObjectKey} from bucket {BucketName}",
+                objectKey, _settings.BucketName);
+
+            await _minioClient.RemoveObjectAsync(
+                new RemoveObjectArgs()
+                    .WithBucket(_settings.BucketName)
+                    .WithObject(objectKey));
+        }
     }
 }

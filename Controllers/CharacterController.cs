@@ -103,5 +103,17 @@ namespace AniCard.Controllers
                 return StatusCode(500, "An error occurred while downloading the character.");
             }         
         }
+
+        [HttpDelete("delete/{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteCharacter(string id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _logger.LogInformation("DeleteCharacter started for character ID: {CharacterId}, user ID: {UserId}", id, userId);
+
+            await _characterService.DeleteCharacterAsync(id, userId);
+
+            return Ok();
+        }
     }
 }

@@ -52,5 +52,19 @@ namespace AniCard.Services
             _logger.LogInformation("Successfully downloaded character {CharacterId} with card name {CardName}", id, result.CardName);
             return result;
         }
+
+        public async Task DeleteCharacterAsync(string characterId, string userId)
+        {
+            var objectKey = await _characterRepository.GetObjectKeyAsync(characterId, userId);
+
+            if (objectKey is null)
+            {
+                throw new KeyNotFoundException($"Character with character id {characterId} and user id {userId} not found");
+            }
+
+            await _characterRepository.DeleteCharacterAsync(characterId, userId);
+
+            await _fileRepository.DeleteCharacterAsync(objectKey);
+        }
     }
 }
