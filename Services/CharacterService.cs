@@ -41,7 +41,7 @@ namespace AniCard.Services
             string objectKey = await _fileRepository.UploadCharacterAsync(dto.File);
             _logger.LogInformation("Character file uploaded for user {UserId} with object key {ObjectKey}", userId, objectKey);
 
-            await _characterRepository.UploadCharacterAsync(metadata, objectKey, dto.Description, dto.Tags, userId);
+            Character character = await _characterRepository.UploadCharacterAsync(metadata, objectKey, dto.Description, dto.Tags, userId);
             _logger.LogInformation("Character saved to database for user {UserId} with character id {CharacterId}", userId, character.Id);
         }
 

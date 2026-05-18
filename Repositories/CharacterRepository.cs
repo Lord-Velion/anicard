@@ -30,7 +30,8 @@ namespace AniCard.Repositories
         /// <param name="tags">Optional list of tags. Commas within a tag
         /// are treated as delimiters; duplicates are deduplicated.</param>
         /// <param name="userId">The uploading user's identifier.</param>
-        public async Task UploadCharacterAsync(CharacterMetadataResult metadata, string objectKey, string? description, string[]? tags, string userId)
+        /// <returns>Character</returns>
+        public async Task<Character> UploadCharacterAsync(CharacterMetadataResult metadata, string objectKey, string? description, string[]? tags, string userId)
         {
             _logger.LogInformation("Saving character for user {UserId} with object key {ObjectKey}", userId, objectKey);
             var character = new Character
@@ -48,6 +49,7 @@ namespace AniCard.Repositories
             _context.Characters.Add(character);
             await _context.SaveChangesAsync();
             _logger.LogInformation("Character saved with id {CharacterId} for user {UserId}", character.Id, userId);
+            return character;
         }
 
         public async Task<List<CharacterGetDto>> GetCharactersAsync(CharactersQueryParams queryParams)
