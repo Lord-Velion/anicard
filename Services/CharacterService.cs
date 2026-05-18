@@ -101,6 +101,16 @@ namespace AniCard.Services
             await _fileRepository.DeleteCharacterAsync(objectKey);
         }
 
+        /// <summary>
+        /// Delegates to the repository to partially update a character's
+        /// description and tags.
+        /// </summary>
+        /// <param name="userId">The authenticated user's identifier used for
+        /// ownership verification.</param>
+        /// <param name="characterId">The character's unique identifier.</param>
+        /// <param name="description">An optional new description.</param>
+        /// <param name="tags">An optional array of tag names replacing
+        /// existing tags.</param>
         public async Task PatchCharacterAsync(string userId, string characterId, string? description, string[]? tags)
         {
             await _characterRepository.PatchCharacterAsync(userId, characterId, description, tags);

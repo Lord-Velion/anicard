@@ -210,6 +210,20 @@ namespace AniCard.Repositories
             }
         }
 
+        /// <summary>
+        /// Partially updates a character's description and tags. Only
+        /// operates if the character belongs to the specified user. A
+        /// non-null <paramref name="description"/> overwrites the existing
+        /// value; a non-null <paramref name="tags"/> replaces all existing
+        /// tags. New tag names are created on the fly.
+        /// </summary>
+        /// <param name="userId">The owner's identifier for access control.</param>
+        /// <param name="characterId">The character's unique identifier.</param>
+        /// <param name="description">The new description, or null to leave
+        /// unchanged.</param>
+        /// <param name="tags">The new tag names, or null to leave unchanged.</param>
+        /// <returns>The updated character, or null if not found or not
+        /// owned by the user.</returns>
         public async Task<Character?> PatchCharacterAsync(string userId, string characterId, string? description, string[]? tags)
         {
             var character = await _context.Characters
@@ -231,6 +245,17 @@ namespace AniCard.Repositories
             return character;
         }
 
+        /// <summary>
+        /// Replaces a character's tag collection. Splits comma-separated
+        /// input, deduplicates case-insensitively, and finds-or-creates
+        /// each tag in the database before associating it with the
+        /// character.
+        /// </summary>
+        /// <param name="character">The character whose tags are being set.</param>
+        /// <param name="tags">An array of tag name strings, which may
+        /// contain comma-separated values.</param>
+        /// <param name="userId">The user identifier (used for logging only).</param>
+        /// <returns>The character with the updated tag collection.</returns>
         private async Task<Character> SetCharacterTags(Character character, string[]? tags, string userId)
         {
             if (tags != null && tags.Length > 0)

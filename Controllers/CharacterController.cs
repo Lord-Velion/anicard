@@ -169,6 +169,20 @@ namespace AniCard.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Partially updates a character's description and/or tags. Only the
+        /// owner of the character is allowed to patch it.
+        /// </summary>
+        /// <param name="id">The character's unique identifier.</param>
+        /// <param name="description">An optional new description. Pass a
+        /// non-null value to update; null leaves the field unchanged.</param>
+        /// <param name="tags">An optional array of tag names. Replaces all
+        /// existing tags when provided; null leaves tags unchanged.</param>
+        /// <returns>200 OK on success.</returns>
+        /// <response code="200">The character was patched successfully.</response>
+        /// <response code="401">The caller is not authenticated.</response>
+        /// <response code="404">No character with the given id exists for the
+        /// authenticated user.</response>
         [HttpPatch("patch/{id}")]
         [Authorize]
         public async Task<IActionResult> PatchCharacter(string id, [FromQuery] string? description, [FromQuery] string[]? tags)
