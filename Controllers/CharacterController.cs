@@ -53,13 +53,7 @@ namespace AniCard.Controllers
                 await _characterService.UploadCharacterAsync(dto, userId);
 
                 _logger.LogInformation("UploadCharacter succeeded for user {UserId} with file {FileName}", userId, dto.File?.FileName);
-                return Ok(new
-                {
-                    message = "Upload successful",
-                    description = dto.Description,
-                    tags = dto.Tags,
-                    fileName = dto.File.FileName
-                });
+                return Ok();
             }
             catch (InvalidCharacterException ex)
             {

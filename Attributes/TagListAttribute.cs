@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AniCard.Attributes;
+namespace AniCard.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class TagListAttribute : ValidationAttribute
