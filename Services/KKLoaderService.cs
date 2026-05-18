@@ -16,6 +16,16 @@ namespace AniCard.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// Sends the character PNG file to the KKLoader microservice's
+        /// /metadata endpoint for validation and metadata extraction.
+        /// </summary>
+        /// <param name="file">The uploaded PNG file.</param>
+        /// <returns>A <see cref="CharacterMetadataResult"/> containing
+        /// the card's name, sex, and personality.</returns>
+        /// <exception cref="InvalidCharacterException">
+        /// Thrown when KKLoader returns a non-success status code or
+        /// an unparseable response body.</exception>
         public async Task<CharacterMetadataResult> GetCharacterMetadataAsync(IFormFile file)
         {
             _logger.LogInformation("KKLoader metadata request started for file {FileName}", file.FileName);

@@ -17,7 +17,20 @@ namespace AniCard.Repositories
             _logger = logger;
         }
 
-        public async Task<Character> UploadCharacterAsync(CharacterMetadataResult metadata, string objectKey, string? description, string[]? tags, string userId)
+        /// <summary>
+        /// Creates a new <see cref="Character"/> entity from the extracted
+        /// metadata and persisted object key, links or creates any provided
+        /// tags, and saves the record to the database.
+        /// </summary>
+        /// <param name="metadata">Card metadata (name, sex, personality)
+        /// from KKLoader.</param>
+        /// <param name="objectKey">The MinIO object key returned after
+        /// file upload.</param>
+        /// <param name="description">Optional user-provided description.</param>
+        /// <param name="tags">Optional list of tags. Commas within a tag
+        /// are treated as delimiters; duplicates are deduplicated.</param>
+        /// <param name="userId">The uploading user's identifier.</param>
+        public async Task UploadCharacterAsync(CharacterMetadataResult metadata, string objectKey, string? description, string[]? tags, string userId)
         {
             _logger.LogInformation("Saving character for user {UserId} with object key {ObjectKey}", userId, objectKey);
             var character = new Character
@@ -35,7 +48,6 @@ namespace AniCard.Repositories
             _context.Characters.Add(character);
             await _context.SaveChangesAsync();
             _logger.LogInformation("Character saved with id {CharacterId} for user {UserId}", character.Id, userId);
-            return character;
         }
 
         public async Task<List<CharacterGetDto>> GetCharactersAsync(CharactersQueryParams queryParams)

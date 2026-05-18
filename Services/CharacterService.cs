@@ -20,17 +20,28 @@ namespace AniCard.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// Orchestrates the full upload pipeline: extracts card metadata from
+        /// the KKLoader microservice, uploads the raw file to MinIO, and
+        /// persists the character record together with tags to the database.
+        /// </summary>
+        /// <param name="dto">The upload DTO containing the file, description,
+        /// and tags.</param>
+        /// <param name="userId">The authenticated user's identifier.</param>
+        /// <exception cref="InvalidCharacterException">
+        /// Thrown when KKLoader rejects the PNG (e.g. not a valid character card).
+        /// </exception>
         public async Task UploadCharacterAsync(CharacterUploadDto dto, string userId)
         {
             _logger.LogInformation("Character upload flow started for user {UserId} with file {FileName}", userId, dto.File?.FileName);
 
-            var metadata = await _kkLoaderService.GetCharacterMetadataAsync(dto.File);
+            CharacterMetadataResult metadata = await _kkLoaderService.GetCharacterMetadataAsync(dto.File);
             _logger.LogInformation("Character metadata fetched for user {UserId} with file {FileName}", userId, dto.File?.FileName);
 
-            var objectKey = await _fileRepository.UploadCharacterAsync(dto.File);
+            string objectKey = await _fileRepository.UploadCharacterAsync(dto.File);
             _logger.LogInformation("Character file uploaded for user {UserId} with object key {ObjectKey}", userId, objectKey);
 
-            var character = await _characterRepository.UploadCharacterAsync(metadata, objectKey, dto.Description, dto.Tags, userId);
+            await _characterRepository.UploadCharacterAsync(metadata, objectKey, dto.Description, dto.Tags, userId);
             _logger.LogInformation("Character saved to database for user {UserId} with character id {CharacterId}", userId, character.Id);
         }
 

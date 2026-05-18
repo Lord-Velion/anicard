@@ -22,6 +22,13 @@ namespace AniCard.Repositories
             _logger = logger;
         }
 
+        /// <summary>
+        /// Uploads the character file to the configured MinIO/S3 bucket.
+        /// Creates the bucket if it does not already exist.
+        /// </summary>
+        /// <param name="file">The uploaded file stream.</param>
+        /// <returns>The generated object key
+        /// (format: "{guid}-{original-filename}").</returns>
         public async Task<string> UploadCharacterAsync(IFormFile file)
         {
             var objectKey = $"{Guid.NewGuid()}-{file.FileName}";

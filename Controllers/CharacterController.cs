@@ -26,6 +26,23 @@ namespace AniCard.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Uploads a character card (PNG). Validates the file format,
+        /// extracts metadata via the KKLoader microservice, stores the file
+        /// in object storage, and persists character data to the database.
+        /// </summary>
+        /// <param name="dto">The upload payload containing the PNG file,
+        /// optional description, and optional tags.</param>
+        /// <returns>
+        /// <see cref="OkResult"/> on success.
+        /// <see cref="BadRequestObjectResult"/> if the model is invalid,
+        /// the file fails PNG validation, or KKLoader rejects the card.
+        /// <see cref="StatusCodeResult"/> 500 on unexpected errors.
+        /// </returns>
+        /// <response code="200">Upload succeeded.</response>
+        /// <response code="400">Invalid request or unprocessable card.</response>
+        /// <response code="401">Missing or invalid JWT.</response>
+        /// <response code="413">File exceeds the 10 MB size limit.</response>
         [HttpPost("upload")]
         [Authorize]
         [Consumes("multipart/form-data")]
