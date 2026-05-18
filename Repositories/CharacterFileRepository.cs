@@ -89,6 +89,11 @@ namespace AniCard.Repositories
             return (memoryStream, cardName);
         }
 
+        /// <summary>
+        /// Deletes the character's raw file from MinIO object storage.
+        /// </summary>
+        /// <param name="objectKey">The MinIO object key of the file to
+        /// delete.</param>
         public async Task DeleteCharacterAsync(string objectKey)
         {
             _logger.LogInformation("Deleting objec {ObjectKey} from bucket {BucketName}",

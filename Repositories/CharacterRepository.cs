@@ -169,6 +169,15 @@ namespace AniCard.Repositories
             return objectKey;
         }
 
+        /// <summary>
+        /// Retrives the MinIO object key for a character, scoped to the specified owner.
+        /// Returns null if the character does not exist
+        /// or does not belong to the given user.
+        /// </summary>
+        /// <param name="characterId">The character's unique identifier.</param>
+        /// <param name="userId">The owner's identifier for access control</param>
+        /// <returns>The object key string, or null if not found or not owned
+        /// by the user.</returns>
         public async Task<string?> GetObjectKeyAsync(string characterId, string userId)
         {
             var objectKey = await _context.Characters
@@ -180,6 +189,14 @@ namespace AniCard.Repositories
             return objectKey;
         }
 
+        /// <summary>
+        /// Removes the character record from the database. Only deletes
+        /// it the character belongs to the specified user. Cascade
+        /// deletes associated CharacterTag join rows; Tag records are
+        /// preserved.
+        /// </summary>
+        /// <param name="characterId">The character's unique identifier.</param>
+        /// <param name="userId">The owner's identifier for access control.</param>
         public async Task DeleteCharacterAsync(string characterId, string userId)
         {
             var record = await _context.Characters

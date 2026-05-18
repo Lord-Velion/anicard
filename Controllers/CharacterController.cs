@@ -147,6 +147,16 @@ namespace AniCard.Controllers
             }         
         }
 
+        /// <summary>
+        /// Deletes a character card and its associated file. Only the owner
+        /// of the character is allowed to delete it.
+        /// </summary>
+        /// <param name="id">The character's unique indentifier.</param>
+        /// <returns>200 OK on success</returns>
+        /// <response code="200">The character was deleted successfully.</response>
+        /// <response code="401">The caller is not authenticated.</response>
+        /// <response code="404">No character with the given id exists for the
+        /// authenticated user.</response>
         [HttpDelete("delete/{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteCharacter(string id)

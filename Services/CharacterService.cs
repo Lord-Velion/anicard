@@ -76,6 +76,17 @@ namespace AniCard.Services
             return result;
         }
 
+        /// <summary>
+        /// Orchestrates character deletion: verifies ownership via the
+        /// character's object key, removes the database record, then
+        /// deletes the associated file from object storage.
+        /// </summary>
+        /// <param name="characterId">The character's unique identifier.</param>
+        /// <param name="userId">The authenticated user's identifier used for
+        /// ownership verification.</param>
+        /// <exception cref="KeyNotFoundException">Thrown when no character
+        /// matching both <paramref name="characterId"/> and
+        /// <paramref name="userId"/> is found.</exception>
         public async Task DeleteCharacterAsync(string characterId, string userId)
         {
             var objectKey = await _characterRepository.GetObjectKeyAsync(characterId, userId);
