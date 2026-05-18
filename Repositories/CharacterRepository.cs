@@ -140,6 +140,14 @@ namespace AniCard.Repositories
             return characters;
         }
     
+        /// <summary>
+        /// Retrives the MinIO object key for a character by its ID.
+        /// Returns <c>null</c> if the character does not exist.
+        /// </summary>
+        /// <param name="characterId">The character's unique identifier (GUID).</param>
+        /// <returns>
+        /// The object key string, or <c>null</c> if not found.
+        /// </returns>
         public async Task<string?> GetObjectKeyAsync(string characterId)
         {
             _logger.LogInformation("Retrieving object key for character ID {CharacterId}", characterId);

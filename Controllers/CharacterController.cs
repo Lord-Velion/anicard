@@ -109,6 +109,20 @@ namespace AniCard.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Downloads a character card (PNG) by its unique identifier.
+        /// Returns the raw PNG file as a download attachment.
+        /// </summary>
+        /// <param name="id">The character's unique identifier (GUID).</param>
+        /// <returns>
+        /// <see cref="FileStreamResult"/> with content type <c>image/png</c>
+        /// and the original card filename.
+        /// <see cref="NotFoundObjectResult"/> if no character exists with the given ID.
+        /// <see cref="StatusCodeResult"/> 500 on unexpected errors.
+        /// </returns>
+        /// <response code="200">Character card PNG file downloaded.</response>
+        /// <response code="404">No character found with the specified ID.</response>
+        /// <response code="500">Unexpected error occured.</response>
         [HttpGet("download/{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> DownloadCharacter(string id)

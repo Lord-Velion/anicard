@@ -45,6 +45,17 @@ namespace AniCard.Services
             _logger.LogInformation("Character saved to database for user {UserId} with character id {CharacterId}", userId, character.Id);
         }
 
+        /// <summary>
+        /// Retrieves a character card file by resolving its object key from the
+        /// database and downloading the raw PNG from object storage.
+        /// </summary>
+        /// <param name="id">The character's unique identifier (GUID).</param>
+        /// <returns>
+        /// A tuple containing the file stream and the card file name.
+        /// </returns>
+        /// <exception cref="KeyNotFoundException">
+        /// Thrown when no character exists with the given ID>
+        /// </exception>
         public async Task<(Stream FileStream, string CardName)> DownloadCharacterAsync(string id)
         {
             _logger.LogInformation("Downloading character with ID {CharacterId}", id);

@@ -60,6 +60,15 @@ namespace AniCard.Repositories
             return objectKey;
         }
 
+        /// <summary>
+        /// Downloads a character card file from MinIO object storage by object key.
+        /// Loads the entire file into a memory stream.
+        /// </summary>
+        /// <param name="objectKey">The MinIO object key to download</param>
+        /// <returns>
+        /// A tuple containing the file memory stream and the card name
+        /// (derived from the object key).
+        /// </returns>
         public async Task<(Stream FileStream, string CardName)> DownloadCharacterAsync(string objectKey)
         {
             _logger.LogInformation("MinIO download started for object key {ObjectKey}", objectKey);
