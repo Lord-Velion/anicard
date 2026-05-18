@@ -6,6 +6,10 @@ using Microsoft.Extensions.Logging;
 
 namespace AniCard.Repositories
 {
+    /// <summary>
+    /// Repository for character card persisence. Provides CRUD operations
+    /// agains the backing databse via Entity Framework Core.
+    /// </summary>
     public class CharacterRepository
     {
         private readonly AppDbContext _context;
@@ -52,6 +56,15 @@ namespace AniCard.Repositories
             return character;
         }
 
+        /// <summary>
+        /// Queries characters with optional filters (name, tags, sex, personality,
+        /// username), configurable sorting (by downloads or upload date), and
+        /// pagination. Returns projected DTOs with tag names and creator username.
+        /// </summary>
+        /// <param name="queryParams">Filtering, sorting, and pagination parameters.</param>
+        /// <returns>
+        /// A list of <see cref="CharacterGetDto"/> matching the query criteria.
+        /// </returns>
         public async Task<List<CharacterGetDto>> GetCharactersAsync(CharactersQueryParams queryParams)
         {
             _logger.LogInformation("GetCharacters: Name={Name}, Tags={Tags}, Sex={Sex}, Personality={Personality}, UserName={UserName}, OrderBy={OrderBy} {Sort}, Page={PageNumber} Size={PageSize}",

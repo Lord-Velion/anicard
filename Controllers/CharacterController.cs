@@ -8,6 +8,10 @@ using System.Security.Claims;
 
 namespace AniCard.Controllers
 {
+    /// <summary>
+    /// Handles character card operations: listening/searching, uploading,
+    /// downloading, editing, and deleting character card.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class CharacterController : ControllerBase
@@ -84,6 +88,19 @@ namespace AniCard.Controllers
             }
         }
 
+        /// <summary>
+        /// Searches and lists character cards with filtering, sorting, and pagination.
+        /// Returns a paginated set of character summaries matching the given criteria.
+        /// </summary>
+        /// <param name="queryParams">
+        /// Query parameters containing optional filters (name, tags, sex, personality,
+        /// username), sort field and direction, and pagination settings.
+        /// </param>
+        /// <returns>
+        /// <see cref="OkObjectResult"/> containing <see cref="List{CharacterGetDto}"/>
+        /// with the matching character cards.
+        /// </returns>
+        /// <response code="200">Characters matching the query returned.</response>
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetCharacter([FromQuery] CharactersQueryParams queryParams)
