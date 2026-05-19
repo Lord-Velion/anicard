@@ -1,6 +1,8 @@
 # 🧝🏻‍♀️ AniCard
 
-Backend для хранения и обмена карточек персонажей Emotion Creators
+Backend для хранения и обмена карточек персонажей Emotion Creators.
+
+Проект разрабатывается для развития навыков backend-разработки и демонстрации контекста знаний для работодателей.
 
 ## 📬 Контакты
 [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/LordVelion)
@@ -50,8 +52,6 @@ Backend для хранения и обмена карточек персона�
     <td align="center"><strong>Nezuko Kamado</strong></td>
   </tr>
 </table>
-
-Планируется вывод проекта в реальное использование.
 
 Проект находится в процессе активной разработки.
 
