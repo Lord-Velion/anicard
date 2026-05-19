@@ -99,8 +99,6 @@ Backend для хранения и обмена карточек персона�
 
 В браузере ввести: `http://localhost:8080/swagger`
 
-![Swagger](README/swagger.png)
-
 ## Применение ИИ в проекте
 
 ![Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)
