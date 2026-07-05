@@ -2,7 +2,7 @@
 
 Backend для хранения и обмена карточек персонажей Emotion Creators.
 
-Проект разрабатывается для развития навыков backend-разработки и демонстрации контекста знаний для работодателей.
+Проект разрабатывается для развития навыков backend-разработки.
 
 ## 📬 Контакты
 [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/LordVelion)
@@ -53,8 +53,6 @@ Backend для хранения и обмена карточек персона�
   </tr>
 </table>
 
-Проект находится в процессе активной разработки.
-
 ## Стек технологий
 
 **Языки**  
@@ -98,19 +96,5 @@ Backend для хранения и обмена карточек персона�
 Дождаться запуска контейнеров.
 
 В браузере ввести: `http://localhost:8080/swagger`
-
-## Применение ИИ в проекте
-
-![Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)
-![DeepSeek](https://img.shields.io/badge/DeepSeek-4A6FA5?style=for-the-badge&logo=data:image/svg%2bxml;base64,...)
-![ChatGPT](https://img.shields.io/badge/ChatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)
-![Opencode](https://img.shields.io/badge/Opencode-555555?style=for-the-badge)
-
-Работа на данный момент идёт по принципу:
-- 60% - Google + Gemini
-- 25% - DeepSeek + ChatGPT
-- 15% - Opencode
-
-Строится понимание пользы ИИ-систем и границ их возможностей.
 
 
