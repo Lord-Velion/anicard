@@ -6,6 +6,10 @@ using Minio.DataModel.Args;
 
 namespace AniCard.Repositories
 {
+    /// <summary>
+    /// Repository for file storage operations in MinIO/S3-compatible object storage.
+    /// Handles upload, download, and deletion of character card PNG files.
+    /// </summary>
     public class CharacterFileRepository
     {
         private readonly IMinioClient _minioClient;
@@ -96,13 +100,15 @@ namespace AniCard.Repositories
         /// delete.</param>
         public async Task DeleteCharacterAsync(string objectKey)
         {
-            _logger.LogInformation("Deleting objec {ObjectKey} from bucket {BucketName}",
+            _logger.LogInformation("Deleting object {ObjectKey} from bucket {BucketName}",
                 objectKey, _settings.BucketName);
 
             await _minioClient.RemoveObjectAsync(
                 new RemoveObjectArgs()
                     .WithBucket(_settings.BucketName)
                     .WithObject(objectKey));
+
+            _logger.LogInformation("MinIO deletion completed for object key {ObjectKey}", objectKey);
         }
     }
 }
