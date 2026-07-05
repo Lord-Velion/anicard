@@ -5,6 +5,10 @@ using AniCard.Models.Entities;
 
 namespace AniCard.Services
 {
+    /// <summary>
+    /// Orchestrates character card business logic: upload, download, delete, and patch operations,
+    /// coordinating between the KKLoader microservice, file storage, and database repositories.
+    /// </summary>
     public class CharacterService
     {
         private readonly KKLoaderService _kkLoaderService;
@@ -89,16 +93,23 @@ namespace AniCard.Services
         /// <paramref name="userId"/> is found.</exception>
         public async Task DeleteCharacterAsync(string characterId, string userId)
         {
+            _logger.LogInformation("DeleteCharacter flow started for character ID: {CharacterId}, user ID: {UserId}", characterId, userId);
+
             var objectKey = await _characterRepository.GetObjectKeyAsync(characterId, userId);
 
             if (objectKey is null)
             {
+                _logger.LogWarning("DeleteCharacter failed: character ID {CharacterId} not found for user {UserId}", characterId, userId);
                 throw new KeyNotFoundException($"Character with character id {characterId} and user id {userId} not found");
             }
 
+            _logger.LogDebug("DeleteCharacter found object key {ObjectKey} for character ID {CharacterId}", objectKey, characterId);
+
             await _characterRepository.DeleteCharacterAsync(characterId, userId);
+            _logger.LogDebug("DeleteCharacter removed database record for character ID {CharacterId}", characterId);
 
             await _fileRepository.DeleteCharacterAsync(objectKey);
+            _logger.LogInformation("DeleteCharacter succeeded for character ID {CharacterId}", characterId);
         }
 
         /// <summary>
@@ -113,7 +124,11 @@ namespace AniCard.Services
         /// existing tags.</param>
         public async Task PatchCharacterAsync(string userId, string characterId, string? description, string[]? tags)
         {
+            _logger.LogInformation("PatchCharacter flow started for character ID: {CharacterId}, user ID: {UserId}", characterId, userId);
+
             await _characterRepository.PatchCharacterAsync(userId, characterId, description, tags);
+
+            _logger.LogInformation("PatchCharacter succeeded for character ID: {CharacterId}", characterId);
         }
     }
 }
