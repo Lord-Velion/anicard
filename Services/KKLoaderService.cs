@@ -5,6 +5,10 @@ using System.Net.Http;
 
 namespace AniCard.Services
 {
+    /// <summary>
+    /// HTTP client for the KKLoader microservice. Validates character card PNGs
+    /// and extracts metadata (name, sex, personality) via its /metadata endpoint.
+    /// </summary>
     public class KKLoaderService
     {
         private readonly HttpClient _httpClient;
