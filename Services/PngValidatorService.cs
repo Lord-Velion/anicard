@@ -3,6 +3,10 @@ using Microsoft.Extensions.Logging;
 
 namespace AniCard.Services
 {
+    /// <summary>
+    /// Validates uploaded character card files. Currently checks for
+    /// non-empty PNG files with the correct extension.
+    /// </summary>
     public class PngValidatorService
     {
         private readonly ILogger<PngValidatorService> _logger;
@@ -12,6 +16,11 @@ namespace AniCard.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// Validates that the uploaded file is a non-empty PNG.
+        /// </summary>
+        /// <param name="file">The uploaded file from the request.</param>
+        /// <returns>A <see cref="ValidationResult"/> indicating success or containing an error message.</returns>
         public ValidationResult ValidateCharacterFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
