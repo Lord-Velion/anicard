@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 namespace AniCard.Repositories
 {
     /// <summary>
-    /// Repository for character card persisence. Provides CRUD operations
-    /// agains the backing databse via Entity Framework Core.
+    /// Repository for character card persistence. Provides CRUD operations
+    /// against the backing database via Entity Framework Core.
     /// </summary>
     public class CharacterRepository
     {
@@ -141,7 +141,7 @@ namespace AniCard.Repositories
         }
     
         /// <summary>
-        /// Retrives the MinIO object key for a character by its ID.
+        /// Retrieves the MinIO object key for a character by its ID.
         /// Returns <c>null</c> if the character does not exist.
         /// </summary>
         /// <param name="characterId">The character's unique identifier (GUID).</param>
@@ -170,7 +170,7 @@ namespace AniCard.Repositories
         }
 
         /// <summary>
-        /// Retrives the MinIO object key for a character, scoped to the specified owner.
+        /// Retrieves the MinIO object key for a character, scoped to the specified owner.
         /// Returns null if the character does not exist
         /// or does not belong to the given user.
         /// </summary>
@@ -180,11 +180,22 @@ namespace AniCard.Repositories
         /// by the user.</returns>
         public async Task<string?> GetObjectKeyAsync(string characterId, string userId)
         {
+            _logger.LogInformation("Retrieving object key for character ID {CharacterId}, user ID {UserId}", characterId, userId);
+
             var objectKey = await _context.Characters
                 .Where(c => c.Id == characterId)
                 .Where(c => c.UserId == userId)
                 .Select(c => c.ObjectKeyId)
                 .FirstOrDefaultAsync();
+
+            if (objectKey == null)
+            {
+                _logger.LogWarning("No object key found for character ID {CharacterId}, user ID {UserId}", characterId, userId);
+            }
+            else
+            {
+                _logger.LogDebug("Found object key {ObjectKey} for character ID {CharacterId}, user ID {UserId}", objectKey, characterId, userId);
+            }
 
             return objectKey;
         }
@@ -199,6 +210,8 @@ namespace AniCard.Repositories
         /// <param name="userId">The owner's identifier for access control.</param>
         public async Task DeleteCharacterAsync(string characterId, string userId)
         {
+            _logger.LogInformation("Deleting character record for character ID {CharacterId}, user ID {UserId}", characterId, userId);
+
             var record = await _context.Characters
                 .FirstOrDefaultAsync(c => c.Id == characterId && c.UserId == userId);
 
@@ -207,6 +220,11 @@ namespace AniCard.Repositories
                 _context.Characters.Remove(record);
 
                 await _context.SaveChangesAsync();
+                _logger.LogInformation("Character record deleted for character ID {CharacterId}", characterId);
+            }
+            else
+            {
+                _logger.LogDebug("No character record found to delete for character ID {CharacterId}, user ID {UserId}", characterId, userId);
             }
         }
 
@@ -226,6 +244,8 @@ namespace AniCard.Repositories
         /// owned by the user.</returns>
         public async Task<Character?> PatchCharacterAsync(string userId, string characterId, string? description, string[]? tags)
         {
+            _logger.LogInformation("Patching character for character ID {CharacterId}, user ID {UserId}", characterId, userId);
+
             var character = await _context.Characters
                 .Include(c => c.Tags)
                 .FirstOrDefaultAsync(c => c.UserId == userId && c.Id == characterId);
@@ -240,6 +260,11 @@ namespace AniCard.Repositories
                 character = await SetCharacterTags(character, tags, userId);
 
                 await _context.SaveChangesAsync();
+                _logger.LogInformation("Character patched successfully for character ID {CharacterId}", characterId);
+            }
+            else
+            {
+                _logger.LogWarning("No character found to patch for character ID {CharacterId}, user ID {UserId}", characterId, userId);
             }
 
             return character;
