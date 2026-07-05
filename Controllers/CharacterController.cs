@@ -105,7 +105,9 @@ namespace AniCard.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetCharacter([FromQuery] CharactersQueryParams queryParams)
         {
+            _logger.LogInformation("GetCharacter started with query: {@QueryParams}", queryParams);
             var result = await _characterRepository.GetCharactersAsync(queryParams);
+            _logger.LogInformation("GetCharacter returned {Count} results", result?.Count ?? 0);
             return Ok(result);
         }
 
@@ -164,9 +166,23 @@ namespace AniCard.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _logger.LogInformation("DeleteCharacter started for character ID: {CharacterId}, user ID: {UserId}", id, userId);
 
-            await _characterService.DeleteCharacterAsync(id, userId);
+            try
+            {
+                await _characterService.DeleteCharacterAsync(id, userId);
 
-            return Ok();
+                _logger.LogInformation("DeleteCharacter succeeded for character ID: {CharacterId}", id);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogWarning("DeleteCharacter failed: Character with ID '{CharacterId}' not found for user {UserId}", id, userId);
+                return NotFound($"Character with id '{id}' not found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "DeleteCharacter failed with unexpected error for character ID: {CharacterId}", id);
+                return StatusCode(500, "An error occurred while deleting the character.");
+            }
         }
 
         /// <summary>
@@ -188,9 +204,25 @@ namespace AniCard.Controllers
         public async Task<IActionResult> PatchCharacter(string id, [FromQuery] string? description, [FromQuery] string[]? tags)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _characterService.PatchCharacterAsync(userId, id, description, tags);
+            _logger.LogInformation("PatchCharacter started for character ID: {CharacterId}, user ID: {UserId}", id, userId);
 
-            return Ok();
+            try
+            {
+                await _characterService.PatchCharacterAsync(userId, id, description, tags);
+
+                _logger.LogInformation("PatchCharacter succeeded for character ID: {CharacterId}", id);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogWarning("PatchCharacter failed: Character with ID '{CharacterId}' not found for user {UserId}", id, userId);
+                return NotFound($"Character with id '{id}' not found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "PatchCharacter failed with unexpected error for character ID: {CharacterId}", id);
+                return StatusCode(500, "An error occurred while patching the character.");
+            }
         }
 
     }
