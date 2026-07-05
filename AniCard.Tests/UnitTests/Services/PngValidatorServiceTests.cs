@@ -51,7 +51,7 @@ public class PngValidatorServiceTests
     }
 
     [Fact]
-    public void ValidateCharacterFile_ValidPngFile_ReturnsSuccess()
+    public void ValidateCharacterFile_ValidExtension_ReturnsSuccess()
     {
         var stream = new MemoryStream(new byte[] { 0x89, 0x50, 0x4E, 0x47 }); // PNG magic bytes
         var file = new FormFile(stream, 0, stream.Length, "file", "character.png");
