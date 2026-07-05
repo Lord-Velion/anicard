@@ -1,6 +1,5 @@
 ﻿using AniCard.Data;
 using AniCard.Repositories;
-using Castle.Core.Logging;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Microsoft.Extensions.Logging;
@@ -465,5 +464,143 @@ public class CharacterRepositoryTests
         var result = await _repo.GetCharactersAsync(queryParams);
 
         Assert.Equal(10, result.Count);
+    }
+
+    [Fact]
+    public async Task GetObjectKeyAsync_ById_ExistingCharacter_ReturnsObjectKey()
+    {
+        await SeedTestDataAsync();
+
+        var result = await _repo.GetObjectKeyAsync("char-1");
+
+        Assert.Equal("obj-1", result);
+    }
+
+    [Fact]
+    public async Task GetObjectKeyAsync_ById_NonExistingCharacter_ReturnsNull()
+    {
+        await SeedTestDataAsync();
+
+        var result = await _repo.GetObjectKeyAsync("non-existent");
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetObjectKeyAsync_ByIdAndUser_OwnedCharacter_ReturnsObjectKey()
+    {
+        await SeedTestDataAsync();
+
+        var result = await _repo.GetObjectKeyAsync("char-1", "user-alice");
+
+        Assert.Equal("obj-1", result);
+    }
+
+    [Fact]
+    public async Task GetObjectKeyAsync_ByIdAndUser_NotOwnedCharacter_ReturnsNull()
+    {
+        await SeedTestDataAsync();
+
+        var result = await _repo.GetObjectKeyAsync("char-1", "user-bob");
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetObjectKeyAsync_ByIdAndUser_NonExistingCharacter_ReturnsNull()
+    {
+        await SeedTestDataAsync();
+
+        var result = await _repo.GetObjectKeyAsync("non-existent", "user-alice");
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task DeleteCharacterAsync_OwnedCharacter_RemovesRecord()
+    {
+        await SeedTestDataAsync();
+
+        await _repo.DeleteCharacterAsync("char-1", "user-alice");
+
+        var deleted = await _db.Characters.FindAsync("char-1");
+        Assert.Null(deleted);
+    }
+
+    [Fact]
+    public async Task DeleteCharacterAsync_NonExistingId_DoesNotThrow()
+    {
+        await SeedTestDataAsync();
+
+        var exception = await Record.ExceptionAsync(() => _repo.DeleteCharacterAsync("non-existent", "user-alice"));
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public async Task DeleteCharacterAsync_NotOwnedByUser_DoesNotDelete()
+    {
+        await SeedTestDataAsync();
+
+        await _repo.DeleteCharacterAsync("char-1", "user-bob");
+
+        var character = await _db.Characters.FindAsync("char-1");
+        Assert.NotNull(character);
+    }
+
+    [Fact]
+    public async Task PatchCharacterAsync_UpdateDescriptionOnly_UpdatesDescription()
+    {
+        await SeedTestDataAsync();
+
+        var result = await _repo.PatchCharacterAsync("user-alice", "char-1", "New description", null);
+
+        Assert.NotNull(result);
+        Assert.Equal("New description", result.Description);
+    }
+
+    [Fact]
+    public async Task PatchCharacterAsync_UpdateTagsOnly_ReplacesTags()
+    {
+        await SeedTestDataAsync();
+
+        var result = await _repo.PatchCharacterAsync("user-alice", "char-1", null, ["action"]);
+
+        Assert.NotNull(result);
+        Assert.Single(result.Tags);
+        Assert.Contains(result.Tags, t => t.Name == "action");
+    }
+
+    [Fact]
+    public async Task PatchCharacterAsync_UpdateBoth_UpdatesDescriptionAndTags()
+    {
+        await SeedTestDataAsync();
+
+        var result = await _repo.PatchCharacterAsync("user-alice", "char-1", "New desc", ["fantasy"]);
+
+        Assert.NotNull(result);
+        Assert.Equal("New desc", result.Description);
+        Assert.Single(result.Tags);
+        Assert.Contains(result.Tags, t => t.Name == "fantasy");
+    }
+
+    [Fact]
+    public async Task PatchCharacterAsync_NonExistingCharacter_ReturnsNull()
+    {
+        await SeedTestDataAsync();
+
+        var result = await _repo.PatchCharacterAsync("user-alice", "non-existent", "desc", null);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task PatchCharacterAsync_NotOwnedByUser_ReturnsNull()
+    {
+        await SeedTestDataAsync();
+
+        var result = await _repo.PatchCharacterAsync("user-bob", "char-1", "desc", null);
+
+        Assert.Null(result);
     }
 }

@@ -40,9 +40,4 @@
     <ProjectReference Include="..\AniCard.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UnitTests\Controllers\" />
-    <Folder Include="UnitTests\Mocks\" />
-  </ItemGroup>
-
 </Project>
