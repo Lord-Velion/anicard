@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="E2ETests\**" />
+    <EmbeddedResource Remove="E2ETests\**" />
+    <None Remove="E2ETests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -35,7 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="E2ETests\" />
     <Folder Include="UnitTests\Controllers\" />
     <Folder Include="UnitTests\Mocks\" />
   </ItemGroup>
